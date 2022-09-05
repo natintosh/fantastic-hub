@@ -1,0 +1,57 @@
+name: hub
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+
+  # Dependencies
+  auto_route: ^5.0.1
+  intl: ^0.17.0
+  flutter_svg: ^1.1.4
+  gap: ^2.0.0
+  google_fonts: ^3.0.1
+  fluentui_system_icons: ^1.1.178
+  flutter_weather_bg_null_safety: ^1.0.0
+  iconforest_icon_park: ^1.0.0+1
+  lorem_gen: ^2.0.1
+  smooth_page_indicator: ^1.0.0+2
+  rxdart: ^0.27.5
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  auto_route_generator: ^5.0.2
+  build_runner: ^2.2.0
+  flutter_gen_runner: ^4.3.0
+  flutter_lints: ^2.0.0
+  surf_lint_rules: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/vectors/
+    - assets/images/
+
+flutter_gen:
+  output: lib/__core__/assets
+
+  # Optional
+  integrations:
+    flutter_svg: true
+    rive: true

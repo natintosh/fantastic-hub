@@ -1,0 +1,21 @@
+{
+    "@@locale": "en",
+    "appName": "Hub",
+    "welcome": "Welcome",
+    "getStarted": "Get Started",
+    "onBoardingMessage": "Control your smart devices from your phone - you can check the weather, control your lights, or make your coffee. Set your thermostat at a specific temperature to save money - and reduce your energy bill.",
+    "dashboard": "Dashboard",
+    "devices": "Devices",
+    "statistics": "Statistics",
+    "user": "User",
+    "weather": "Weather",
+    "weatherOutside": "Weather outside",
+    "welcomeUser": "Welcome, {username}!",
+    "@welcomeUser": {
+        "placeholders": {
+            "username": {}
+        }
+    },
+    "letsManageYourSmartHome": "Let's manage your smart home",
+    "locations": "Locations"
+}
