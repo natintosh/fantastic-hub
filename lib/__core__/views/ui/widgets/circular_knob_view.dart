@@ -1,133 +1,203 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide TextStyle, FontWeight;
-import 'package:flutter/rendering.dart' hide TextStyle, FontWeight;
 import 'package:flutter/services.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/extensions/nums.dart';
 import 'package:hub/__core__/extensions/theme.dart';
+import 'package:hub/__core__/utils/custom_pan_recogniser.dart';
 import 'package:hub/__core__/utils/math.dart';
 
-class CircularKnobView extends LeafRenderObjectWidget {
+class CircularKnobView extends StatefulWidget {
   const CircularKnobView({
     super.key,
-    required this.context,
+    this.progress = 0.0,
     required this.progressText,
-    required this.progressLabelText,
-    this.progress = 0,
+    required this.labelText,
     this.onChanged,
   });
 
-  final BuildContext context;
-  final double progress;
   final ValueChanged<double>? onChanged;
   final String progressText;
-  final String progressLabelText;
+  final String labelText;
+  final double progress;
 
   @override
-  RenderObject createRenderObject(BuildContext context) {
-    return _CircularKnobRenderObject(
-        progress: progress,
-        context: context,
-        progressText: progressText,
-        progressLabelText: progressLabelText,
-        onChanged: onChanged);
-  }
-
-  @override
-  void updateRenderObject(
-      BuildContext context, covariant _CircularKnobRenderObject renderObject) {
-    renderObject
-      ..onChanged = onChanged
-      ..progressText = progressText
-      ..progressLabelText = progressLabelText
-      ..progress = progress
-      ..updateSweepAngle();
-  }
+  State<CircularKnobView> createState() => _CircularKnobViewState();
 }
 
-class _CircularKnobRenderObject extends RenderBox {
-  _CircularKnobRenderObject({
-    required this.progress,
-    required this.context,
-    required this.progressText,
-    required this.progressLabelText,
-    this.onChanged,
-  }) {
-    _sweepAngle = interpolate(
-        outputMin: minSweepAngle, outputMax: maxSweepAngle)(progress);
-    drag = PanGestureRecognizer()
-      ..onStart = onDragStart
-      ..onUpdate = onDragUpdate
-      ..onCancel = onDragCancel
-      ..onEnd = onDragEnd;
-  }
+class _CircularKnobViewState extends State<CircularKnobView> {
+  late _CircularKnobPainter painter;
 
-  double progress = 0;
-  String progressText;
-  String progressLabelText;
-  ValueChanged<double>? onChanged;
+  late bool knobHandleSelected = false;
 
-  final BuildContext context;
+  late Offset currentDragOffset = Offset.zero;
 
-  final _startAngle = 0.0.radians;
-  var _sweepAngle = 120.radians;
+  double sweepAngle = 0.0.radians;
 
-  final minRadius = 100.0;
-  final maxRadius = 250.0;
+  double progress = 0.0;
 
-  final minSweepAngle = 0.0.radians;
-  final maxSweepAngle = 300.0.radians;
-
-  late Path knobPath;
-  late Rect handleBounds;
-
-  bool knobHandleSelected = false;
-
-  late final DragGestureRecognizer drag;
-
-  Offset currentDragOffset = Offset.zero;
-
-  void updateSweepAngle() {
-    _sweepAngle = interpolate(
-        outputMin: minSweepAngle, outputMax: maxSweepAngle)(progress);
+  @override
+  void initState() {
+    progress = widget.progress;
+    setupPainter();
+    super.initState();
   }
 
   @override
-  bool hitTestSelf(Offset position) {
-    return knobPath.contains(position);
+  void didUpdateWidget(covariant CircularKnobView oldWidget) {
+    if (widget.progress != oldWidget.progress ||
+        widget.progressText != oldWidget.progressText ||
+        widget.labelText != oldWidget.labelText ||
+        widget.onChanged != oldWidget.onChanged) {
+      // progress = widget.progress;
+      setState(setupPainter);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
-  bool get isRepaintBoundary => true;
+  Widget build(BuildContext context) {
+    return RawGestureDetector(
+      gestures: <Type, GestureRecognizerFactory>{
+        CustomPanGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<CustomPanGestureRecognizer>(
+          () {
+            return CustomPanGestureRecognizer(
+                onPanDown: onPanDown,
+                onPanUpdate: onPanUpdate,
+                onPanEnd: onPanEnd);
+          },
+          (instance) {},
+        ),
+      },
+      child: CustomPaint(
+        painter: painter,
+      ),
+    );
+  }
 
-  @override
-  void handleEvent(PointerEvent event, covariant BoxHitTestEntry entry) {
-    if (event is PointerDownEvent) {
-      drag.addPointer(event);
+  void setupPainter() {
+    painter = _CircularKnobPainter(
+        context: context,
+        progressText: widget.progressText,
+        progressLabelText: widget.labelText,
+        progress: progress,
+        knobHandleSelected: knobHandleSelected);
+  }
+
+  void onPanDown(PointerDownEvent event) {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final position = renderBox.globalToLocal(event.position);
+
+    if (painter.handleBounds?.contains(position) ?? false) {
+      knobHandleSelected = true;
+      currentDragOffset = position;
+      setState(setupPainter);
     }
   }
 
-  @override
-  void performLayout() {
-    final effectiveConstraints = constraints.enforce(
-      BoxConstraints(
-        minHeight: minRadius * 2,
-        minWidth: minRadius * 2,
-        maxHeight: maxRadius * 2,
-        maxWidth: maxRadius * 2,
-      ),
+  void onPanUpdate(PointerMoveEvent event) {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final position = renderBox.globalToLocal(event.position);
+
+    final diffInAngle = painter.calculateDiffInAngle(
+      currentDragOffset,
+      currentDragOffset + event.delta,
     );
 
-    size = Size.square(effectiveConstraints.biggest.shortestSide);
+    final angle =
+        painter.normalizeSweepAngle(sweepAngle.subtractAngle(diffInAngle));
+
+    if (angle > (painter.minSweepAngle) && angle < (painter.maxSweepAngle)) {
+      sweepAngle = angle;
+      currentDragOffset = position;
+      onAngleChange();
+      setState(setupPainter);
+    } else {
+      onPanCompleted();
+    }
+  }
+
+  void onPanEnd(PointerUpEvent event) {
+    onPanCompleted();
+  }
+
+  void onPanCompleted() {
+    knobHandleSelected = false;
+    currentDragOffset = Offset.zero;
+    setState(setupPainter);
+  }
+
+  void onAngleChange() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        HapticFeedback.selectionClick();
+      },
+    );
+
+    final interpolator = interpolate(
+      inputMin: painter.minSweepAngle,
+      inputMax: painter.maxSweepAngle,
+    );
+
+    progress = interpolator(sweepAngle);
+
+    widget.onChanged?.call(progress);
+  }
+}
+
+class _CircularKnobPainter extends CustomPainter {
+  _CircularKnobPainter({
+    required this.context,
+    required this.progress,
+    required this.progressText,
+    required this.progressLabelText,
+    required this.knobHandleSelected,
+  }) : assert(progress >= 0 && progress <= 1.0) {
+    _sweepAngle = interpolate(
+        outputMin: minSweepAngle, outputMax: maxSweepAngle)(progress);
+  }
+
+  final BuildContext context;
+  final double progress;
+
+  final String progressText;
+  final String progressLabelText;
+
+  final double minSweepAngle = 0.0.radians;
+  final double maxSweepAngle = 330.0.radians;
+
+  final _startAngle = 0.0.radians;
+  late double _sweepAngle = 120.radians;
+
+  late bool knobHandleSelected = false;
+
+  Path? knobPath;
+
+  Size? size;
+
+  Rect? handleBounds;
+
+  bool? canHit(Offset offset) {
+    return knobPath?.contains(offset);
   }
 
   @override
-  void paint(PaintingContext context, Offset offset) {
-    final canvas = context.canvas;
-    final bounds = offset & size;
+  bool shouldRepaint(covariant _CircularKnobPainter oldDelegate) {
+    if (oldDelegate.progress != progress) {
+      _sweepAngle = interpolate(
+          outputMin: minSweepAngle, outputMax: maxSweepAngle)(progress);
+    }
+
+    return true;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    this.size = size;
+    final bounds = Offset.zero & size;
     final radius = size.width / 2;
     final center = bounds.center;
     final angleOffset = -90.radians;
@@ -136,7 +206,7 @@ class _CircularKnobRenderObject extends RenderBox {
     canvas.drawCircle(
       center,
       radius,
-      Paint()..color = this.context.theme.colorScheme.surfaceElevation1,
+      Paint()..color = context.theme.colorScheme.surfaceElevation1,
     );
 
     final knobThickness = size.width / 8;
@@ -154,20 +224,20 @@ class _CircularKnobRenderObject extends RenderBox {
 
     final endOffset = toPolar(center, endAngle, knobRadius);
     final innerEndOffset = toPolar(center, endAngle, innerKnobRadius);
-    final knobColor = this.context.theme.colorScheme.primaryContainer;
-    final knobHandleColor = this.context.theme.colorScheme.onPrimaryContainer;
+    final knobColor = context.theme.colorScheme.primaryContainer;
+    final knobHandleColor = context.theme.colorScheme.onPrimaryContainer;
 
     // Draw track
     canvas
       ..drawCircle(
         center,
         knobRadius,
-        Paint()..color = this.context.theme.colorScheme.surfaceElevation3,
+        Paint()..color = context.theme.colorScheme.surfaceElevation3,
       )
       ..drawCircle(
         center,
         innerKnobRadius,
-        Paint()..color = this.context.theme.colorScheme.surfaceElevation1,
+        Paint()..color = context.theme.colorScheme.surfaceElevation1,
       );
 
     // Draw knob path
@@ -193,10 +263,12 @@ class _CircularKnobRenderObject extends RenderBox {
         radius: Radius.circular(knobThickness / 2),
       );
 
-    canvas.drawPath(
-      knobPath,
-      Paint()..color = knobColor,
-    );
+    if (knobPath != null) {
+      canvas.drawPath(
+        knobPath!,
+        Paint()..color = knobColor,
+      );
+    }
 
     // Draw knob handle
     final handleSize = Size.square(knobThickness);
@@ -208,16 +280,18 @@ class _CircularKnobRenderObject extends RenderBox {
       height: handleSize.height,
     );
 
-    canvas.drawCircle(
-      handleBounds.center,
-      handleSize.radius,
-      Paint()
-        ..color =
-            knobHandleSelected ? handleSelectedStateColor! : knobHandleColor,
-    );
+    if (handleBounds != null) {
+      canvas.drawCircle(
+        handleBounds!.center,
+        handleSize.radius,
+        Paint()
+          ..color =
+              knobHandleSelected ? handleSelectedStateColor! : knobHandleColor,
+      );
+    }
 
     // Draw Progress Text
-    final textColor = this.context.theme.colorScheme.onSurface;
+    final textColor = context.theme.colorScheme.onSurface;
     final fontSize = innerKnobRadius / 2;
     final labelFontSize = innerKnobRadius / 6;
     final progressTextBound = center - Offset(0, innerKnobRadius / 6);
@@ -239,57 +313,6 @@ class _CircularKnobRenderObject extends RenderBox {
       fontSize: labelFontSize,
       fontWeight: FontWeight.bold,
     );
-
-    super.paint(context, offset);
-  }
-
-  void onDragStart(DragStartDetails details) {
-    final offset = globalToLocal(details.globalPosition);
-    if (handleBounds.contains(offset)) {
-      knobHandleSelected = true;
-      currentDragOffset = offset;
-    }
-    markNeedsPaint();
-  }
-
-  void onDragUpdate(DragUpdateDetails details) {
-    final diffInAngle = calculateDiffInAngle(
-      currentDragOffset,
-      currentDragOffset + details.delta,
-    );
-    final angle = normalizeSweepAngle(_sweepAngle.subtractAngle(diffInAngle));
-
-    if (angle > minSweepAngle && angle < maxSweepAngle) {
-      _sweepAngle = angle;
-      currentDragOffset = details.localPosition;
-      onAngleChange();
-      markNeedsPaint();
-    } else {
-      onDragCancel();
-    }
-  }
-
-  void onDragCancel() {
-    knobHandleSelected = false;
-    currentDragOffset = Offset.zero;
-    markNeedsPaint();
-  }
-
-  void onDragEnd(DragEndDetails details) {
-    onDragCancel();
-  }
-
-  void onAngleChange() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        HapticFeedback.selectionClick();
-      },
-    );
-
-    final interpolator =
-        interpolate(inputMax: maxSweepAngle, inputMin: minSweepAngle);
-
-    onChanged?.call(interpolator(_sweepAngle));
   }
 
   Rect _drawParagraph(
@@ -324,6 +347,10 @@ class _CircularKnobRenderObject extends RenderBox {
   }
 
   double calculateDiffInAngle(Offset prev, Offset current) {
-    return toCartesian(prev, size.radius) - toCartesian(current, size.radius);
+    return toCartesian(prev, size?.radius ?? Size.zero.radius) -
+        toCartesian(
+          current,
+          size?.radius ?? Size.zero.radius,
+        );
   }
 }

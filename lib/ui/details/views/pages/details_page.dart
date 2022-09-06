@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/views/ui/widgets/app_control_tile.dart';
-import 'package:hub/__core__/views/ui/widgets/circular_knob_view.dart';
-import 'package:hub/__core__/views/ui/widgets/slider_dial_view.dart';
+import 'package:iconforest_icon_park/icon_park.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -14,8 +13,9 @@ class DetailsPage extends StatefulWidget {
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
-  BehaviorSubject<double> _progressSubject = BehaviorSubject.seeded(0);
+class _DetailsPageState extends State<DetailsPage>
+    with TickerProviderStateMixin {
+  final BehaviorSubject<double> _progressSubject = BehaviorSubject.seeded(0);
 
   Stream<double> get progressStream => _progressSubject.stream;
 
@@ -28,40 +28,45 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     final content = ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 100),
       children: [
+        const Gap(40),
+        AppControlCircularProgress(
+          valueStream: progressStream,
+          onChanged: _progressSubject.add,
+        ),
+        const Gap(40),
         AppControlSwitch(
           label: 'Samsung AC',
           valueStream: Stream.value(true),
           onChanged: (value) {},
         ),
-        Align(
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: CircularKnobView(
-              context: context,
-              progress: 10,
-              progressText: '10',
-              progressLabelText: 'Celcius',
-            ),
-          ),
-        ),
-        // AppControlCircularProgress(
-        //   label: 'Temperature',
-        //   valueStream: progressStream,
-        //   onChanged: (value) {
-        //     _progressSubject.add(value);
-        //   },
-        // ),
         const Gap(20),
-        Align(
-          child: SliderDialView(
-            context: context,
-            thumbRadius: 16,
-            onChanged: (value) {},
-          ),
-        )
+        AppControlModeSelector(
+          label: 'Mode',
+          modes: [
+            DeviceMode(
+              label: 'Cool',
+              asset: IconPark.snowflake,
+            ),
+            DeviceMode(
+              label: 'Air',
+              asset: IconPark.wind,
+            ),
+            DeviceMode(
+              label: 'Hot',
+              asset: IconPark.sun,
+            ),
+            DeviceMode(
+              label: 'Eco',
+              asset: IconPark.leaves,
+            ),
+          ],
+        ),
+        const Gap(20),
+        const AppControlTimerSelector(
+          label: 'Timer',
+        ),
       ],
     );
 

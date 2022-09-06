@@ -23,7 +23,7 @@ class AppHeader extends StatelessWidget {
       children: [
         Text(
           text,
-          style: context.theme.textTheme.titleMedium,
+          style: context.theme.textTheme.titleLarge,
         ),
       ],
     );

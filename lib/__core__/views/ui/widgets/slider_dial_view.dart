@@ -45,7 +45,7 @@ class SliderDialView extends LeafRenderObjectWidget {
       maxTrackValue: maxTrackValue,
       trackStep: trackStep,
       onChanged: onChanged,
-      stepSuffix: stepPrefix,
+      stepSuffix: stepSuffix,
       stepPrefix: stepPrefix,
     );
   }
@@ -248,7 +248,7 @@ class _SliderDialRenderObject extends RenderBox {
 
       _drawParagraph(
         canvas,
-        '$i',
+        '$stepPrefix$i$stepSuffix',
         offset: textOffset + Offset(position, 0),
         color: behindKnob ? highlightedTextColor : textColor,
         fontSize: fontSize,
