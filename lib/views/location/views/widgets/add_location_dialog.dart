@@ -47,6 +47,7 @@ class _AddLocationDialogState extends State<AddLocationDialog> {
         const Gap(8),
         const AppTextField.stream(valueStream: Stream.empty()),
         const Gap(20),
+        SizedBox(height: context.mq.viewInsets.bottom),
         ElevatedButton(
           onPressed: onAddLocationButtonPressed,
           child: const Text('Add Location'),

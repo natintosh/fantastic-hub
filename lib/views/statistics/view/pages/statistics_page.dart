@@ -42,6 +42,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Statistics"),
         centerTitle: true,
       ),

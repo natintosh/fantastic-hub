@@ -1,17 +1,13 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hub/__core__/app_router.gr.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/views/widgets/app_grid_view.dart';
 import 'package:hub/__core__/components/views/widgets/smart_widget.dart';
+import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/views/dashboard/views/widgets/news_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/user_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/weather_preview.dart';
 import 'package:hub/views/details/models/data/device.dart';
 import 'package:hub/views/details/views/pages/details_page.dart';
-import 'package:iconforest_icon_park/icon_park.dart';
 
 class LocationTabs extends StatelessWidget {
   const LocationTabs({
@@ -33,80 +29,43 @@ class LocationTabs extends StatelessWidget {
       AppGridView(
         children: [
           SmartWidget.activeSwitch(
-            name: 'Lamp',
-            icon: IconPark.svgAsset(
-              IconPark.light,
-              color: context.theme.iconTheme.color,
-              width: 24,
-              height: 24,
-            ),
-            onTap: () {
-              DetailsPage.lamp(
-                context: context,
-                device: Device(
-                    type: DeviceType.smartBulb,
-                    name: 'Smart Bulb',
-                    brand: 'Phillips',
-                    location: 'Living Room'),
-              );
+            device: const Device(
+                type: DeviceType.smartBulb,
+                name: 'Smart Bulb',
+                brand: 'Phillips',
+                location: 'Living Room'),
+            onTap: (device) {
+              DetailsPage.pushOnType(context: context, device: device);
             },
           ),
           SmartWidget.activeSwitch(
-            valueStream: Stream<bool>.value(true),
-            name: 'Air Conditioner',
-            icon: IconPark.svgAsset(
-              IconPark.air_conditioning,
-              color: context.theme.iconTheme.color,
-              width: 24,
-              height: 24,
-            ),
-            onTap: () {
-              DetailsPage.airConditioner(
-                context: context,
-                device: Device(
-                    type: DeviceType.smartAirConditioner,
-                    name: 'Air Conditioner',
-                    brand: 'Samsung',
-                    location: 'Living Room'),
-              );
+            device: const Device(
+                type: DeviceType.smartAirConditioner,
+                name: 'Air Conditioner',
+                brand: 'Samsung',
+                location: 'Living Room'),
+            onTap: (device) {
+              DetailsPage.pushOnType(context: context, device: device);
             },
           ),
           SmartWidget.activeSwitch(
-            name: 'Assistant',
-            icon: IconPark.svgAsset(
-              IconPark.voice,
-              color: context.theme.iconTheme.color,
-              width: 24,
-              height: 24,
-            ),
-            onTap: () {
-              DetailsPage.voiceAssistant(
-                context: context,
-                device: Device(
-                    type: DeviceType.smartVoiceAssistant,
-                    name: 'Voice Assistant',
-                    brand: 'Amazon',
-                    location: 'Living Room'),
-              );
+            device: const Device(
+                type: DeviceType.smartVoiceAssistant,
+                name: 'Voice Assistant',
+                brand: 'Amazon',
+                location: 'Living Room'),
+            onTap: (device) {
+              DetailsPage.pushOnType(context: context, device: device);
             },
           ),
           SmartWidget.activeSwitch(
-            name: 'Television',
-            icon: IconPark.svgAsset(
-              IconPark.tv,
-              color: context.theme.iconTheme.color,
-              width: 24,
-              height: 24,
-            ),
-            onTap: () {
-              DetailsPage.tv(
-                context: context,
-                device: Device(
-                    type: DeviceType.smartTelevision,
-                    name: 'Smart TV',
-                    brand: 'Onn',
-                    location: 'Living Room'),
-              );
+            device: const Device(
+                type: DeviceType.smartTelevision,
+                name: 'Smart TV',
+                brand: 'Onn',
+                location: 'Living Room'),
+            onTap: (device) {
+              DetailsPage.pushOnType(context: context, device: device);
             },
           ),
         ],

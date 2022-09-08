@@ -69,6 +69,7 @@ class _UserPageState extends State<UserPage> {
     );
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('User'),
         centerTitle: true,
       ),

@@ -9,53 +9,31 @@ import 'package:hub/views/details/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 import 'package:rxdart/rxdart.dart';
 
-//[
-//         const Gap(20),
-//         const ColorPickerView(),
-//         AppControlCircularProgress(
-//           valueStream: progressStream,
-//           onChanged: _progressSubject.add,
-//         ),
-//         AppControlSwitch(
-//           label: 'Power',
-//           valueStream: Stream.value(true),
-//           onChanged: (value) {},
-//         ),
-//         AppControlModeSelector(
-//           label: 'Mode',
-//           modes: [
-//             DeviceMode(
-//               label: 'Cool',
-//               asset: IconPark.snowflake,
-//             ),
-//             DeviceMode(
-//               label: 'Air',
-//               asset: IconPark.wind,
-//             ),
-//             DeviceMode(
-//               label: 'Hot',
-//               asset: IconPark.sun,
-//             ),
-//             DeviceMode(
-//               label: 'Eco',
-//               asset: IconPark.leaves,
-//             ),
-//           ],
-//         ),
-//         const Gap(20),
-//         const AppControlTimerSelector(
-//           label: 'Timer',
-//         ),
-//       ]
-
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key, required this.device, required this.controls});
 
   final Device device;
   final List<AppControlTile> controls;
 
-  static void tv(
+  static void pushOnType(
       {required BuildContext context, required Device device}) {
+    switch (device.type) {
+      case DeviceType.smartVoiceAssistant:
+        voiceAssistant(context: context, device: device);
+        break;
+      case DeviceType.smartTelevision:
+        tv(context: context, device: device);
+        break;
+      case DeviceType.smartBulb:
+        lamp(context: context, device: device);
+        break;
+      case DeviceType.smartAirConditioner:
+        airConditioner(context: context, device: device);
+        break;
+    }
+  }
+
+  static void tv({required BuildContext context, required Device device}) {
     context.router.push(
       DetailsRouter(
         device: device,
