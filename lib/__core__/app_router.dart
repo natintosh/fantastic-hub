@@ -5,6 +5,7 @@ import 'package:hub/ui/details/views/pages/details_page.dart';
 import 'package:hub/ui/devices/views/pages/devices_page.dart';
 import 'package:hub/ui/index/views/pages/index_page.dart';
 import 'package:hub/ui/onboarding/views/pages/on_boarding_page.dart';
+import 'package:hub/ui/routines/views/pages/routines_page.dart';
 import 'package:hub/ui/statistics/view/pages/statistics_page.dart';
 import 'package:hub/ui/user/views/pages/user_page.dart';
 
@@ -46,6 +47,11 @@ import 'package:hub/ui/user/views/pages/user_page.dart';
       path: 'details',
       name: 'DetailsRouter',
       page: DetailsPage,
+    ),
+    AutoRoute<void>(
+      path: 'routines',
+      name: 'RoutinesRouter',
+      page: RoutinesPage,
     )
   ],
 )

@@ -218,7 +218,7 @@ class _DetailsPageState extends State<DetailsPage>
       appBar: AppBar(
         title: Column(
           children: [
-            Text(widget.device.deviceType),
+            Text(widget.device.name),
             Text(
               widget.device.location,
               style: context.theme.textTheme.bodySmall,

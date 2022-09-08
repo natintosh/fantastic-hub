@@ -1,12 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hub/__core__/app_router.gr.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/views/ui/widgets/app_header.dart';
 import 'package:hub/ui/dashboard/views/widgets/location_tabs.dart';
 import 'package:hub/ui/dashboard/views/widgets/news_preview.dart';
+import 'package:hub/ui/dashboard/views/widgets/routine_preview.dart';
 import 'package:hub/ui/dashboard/views/widgets/user_preview.dart';
 import 'package:hub/ui/dashboard/views/widgets/weather_preview.dart';
+import 'package:hub/ui/location/views/widgets/add_location_dialog.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -24,7 +28,13 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  void onAddLocationPressed() {}
+  void onShowRoutinesButtonPressed() {
+    context.router.push(const RoutinesRouter());
+  }
+
+  void onAddLocationPressed() {
+    AddLocationDialog.showDialog(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +53,17 @@ class _DashboardPageState extends State<DashboardPage> {
         const WeatherPreview(),
         const Gap(20),
         const NewsPreview(),
+        const Gap(20),
+        AppHeader.withAction(
+          text: localization.routine,
+          action: const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Icon(FluentIcons.list_24_filled),
+          ),
+          onAction: onShowRoutinesButtonPressed,
+        ),
+        const Gap(20),
+        const RoutinePreview(),
         const Gap(20),
         AppHeader.withAction(
           text: localization.locations,

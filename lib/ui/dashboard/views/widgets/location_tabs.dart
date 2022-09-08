@@ -44,7 +44,8 @@ class LocationTabs extends StatelessWidget {
               DetailsPage.lamp(
                 context: context,
                 device: Device(
-                    deviceType: 'Smart Bulb',
+                    type: DeviceType.smartBulb,
+                    name: 'Smart Bulb',
                     brand: 'Phillips',
                     location: 'Living Room'),
               );
@@ -63,7 +64,8 @@ class LocationTabs extends StatelessWidget {
               DetailsPage.airConditioner(
                 context: context,
                 device: Device(
-                    deviceType: 'Air Conditioner',
+                    type: DeviceType.smartAirConditioner,
+                    name: 'Air Conditioner',
                     brand: 'Samsung',
                     location: 'Living Room'),
               );
@@ -81,7 +83,8 @@ class LocationTabs extends StatelessWidget {
               DetailsPage.voiceAssistant(
                 context: context,
                 device: Device(
-                    deviceType: 'Voice Assistant',
+                    type: DeviceType.smartVoiceAssistant,
+                    name: 'Voice Assistant',
                     brand: 'Amazon',
                     location: 'Living Room'),
               );
@@ -99,7 +102,8 @@ class LocationTabs extends StatelessWidget {
               DetailsPage.tv(
                 context: context,
                 device: Device(
-                    deviceType: 'Smart TV',
+                    type: DeviceType.smartTelevision,
+                    name: 'Smart TV',
                     brand: 'Onn',
                     location: 'Living Room'),
               );
