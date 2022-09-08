@@ -20,6 +20,7 @@ dependencies:
   arrow_pad: ^0.1.4
   auto_route: ^5.0.1
   intl: ^0.17.0
+  fl_chart: ^0.55.1
   flutter_svg: ^1.1.4
   gap: ^2.0.0
   google_fonts: ^3.0.1

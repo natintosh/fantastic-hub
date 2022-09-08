@@ -1,13 +1,26 @@
 import 'package:iconforest_icon_park/icon_park.dart';
 
 enum DeviceType {
-  smartVoiceAssistant(icon: IconPark.voice),
-  smartTelevision(icon: IconPark.tv),
-  smartBulb(icon: IconPark.light),
-  smartAirConditioner(icon: IconPark.air_conditioning);
+  smartVoiceAssistant(
+    icon: IconPark.voice,
+    name: 'Voice Assistant',
+  ),
+  smartTelevision(
+    icon: IconPark.tv,
+    name: 'Television',
+  ),
+  smartBulb(
+    icon: IconPark.light,
+    name: 'Light',
+  ),
+  smartAirConditioner(
+    icon: IconPark.air_conditioning,
+    name: 'Air Conditioner',
+  );
 
-  const DeviceType({required this.icon});
+  const DeviceType({required this.icon, required this.name});
 
+  final String name;
   final String icon;
 }
 

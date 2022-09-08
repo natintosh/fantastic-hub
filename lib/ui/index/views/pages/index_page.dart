@@ -48,26 +48,29 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        destinations: navigationItems,
-        onDestinationSelected: onDestinationSelected,
-      ),
-      body: AutoTabsRouter(
-        routes: const <PageRouteInfo>[
-          DashboardRouter(),
-          DeviceRouter(),
-          StatisticsRouter(),
-          UserRouter(),
-        ],
-        builder: (context, child, animation) {
-          return AnimatedSwitcher(
+    return AutoTabsRouter(
+      routes: const <PageRouteInfo>[
+        DashboardRouter(),
+        DeviceRouter(),
+        StatisticsRouter(),
+        UserRouter(),
+      ],
+      builder: (context, child, animation) {
+        return Scaffold(
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: index,
+            destinations: navigationItems,
+            onDestinationSelected: (index) {
+              AutoTabsRouter.of(context).setActiveIndex(index);
+              onDestinationSelected(index);
+            },
+          ),
+          body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 350),
             child: child,
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
