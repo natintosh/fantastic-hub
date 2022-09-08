@@ -13,16 +13,16 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i9;
 import 'package:flutter/material.dart' as _i10;
-import 'package:hub/__core__/views/ui/widgets/app_control_tile.dart' as _i12;
-import 'package:hub/ui/dashboard/views/pages/dashboard_page.dart' as _i5;
-import 'package:hub/ui/details/models/data/device.dart' as _i11;
-import 'package:hub/ui/details/views/pages/details_page.dart' as _i3;
-import 'package:hub/ui/devices/views/pages/devices_page.dart' as _i6;
-import 'package:hub/ui/index/views/pages/index_page.dart' as _i2;
-import 'package:hub/ui/onboarding/views/pages/on_boarding_page.dart' as _i1;
-import 'package:hub/ui/routines/views/pages/routines_page.dart' as _i4;
-import 'package:hub/ui/statistics/view/pages/statistics_page.dart' as _i7;
-import 'package:hub/ui/user/views/pages/user_page.dart' as _i8;
+import 'package:hub/__core__/components/views/widgets/app_control_tile.dart' as _i12;
+import 'package:hub/views/dashboard/views/pages/dashboard_page.dart' as _i5;
+import 'package:hub/views/details/models/data/device.dart' as _i11;
+import 'package:hub/views/details/views/pages/details_page.dart' as _i3;
+import 'package:hub/views/devices/views/pages/devices_page.dart' as _i6;
+import 'package:hub/views/index/views/pages/index_page.dart' as _i2;
+import 'package:hub/views/onboarding/views/pages/on_boarding_page.dart' as _i1;
+import 'package:hub/views/routines/views/pages/routines_page.dart' as _i4;
+import 'package:hub/views/statistics/view/pages/statistics_page.dart' as _i7;
+import 'package:hub/views/user/views/pages/user_page.dart' as _i8;
 
 class AppRouter extends _i9.RootStackRouter {
   AppRouter([_i10.GlobalKey<_i10.NavigatorState>? navigatorKey])

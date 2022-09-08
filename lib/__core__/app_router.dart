@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:hub/__core__/views/ui/pages/empty_page.dart';
-import 'package:hub/ui/dashboard/views/pages/dashboard_page.dart';
-import 'package:hub/ui/details/views/pages/details_page.dart';
-import 'package:hub/ui/devices/views/pages/devices_page.dart';
-import 'package:hub/ui/index/views/pages/index_page.dart';
-import 'package:hub/ui/onboarding/views/pages/on_boarding_page.dart';
-import 'package:hub/ui/routines/views/pages/routines_page.dart';
-import 'package:hub/ui/statistics/view/pages/statistics_page.dart';
-import 'package:hub/ui/user/views/pages/user_page.dart';
+import 'package:hub/__core__/components/views/pages/empty_page.dart';
+import 'package:hub/views/dashboard/views/pages/dashboard_page.dart';
+import 'package:hub/views/details/views/pages/details_page.dart';
+import 'package:hub/views/devices/views/pages/devices_page.dart';
+import 'package:hub/views/index/views/pages/index_page.dart';
+import 'package:hub/views/onboarding/views/pages/on_boarding_page.dart';
+import 'package:hub/views/routines/views/pages/routines_page.dart';
+import 'package:hub/views/statistics/view/pages/statistics_page.dart';
+import 'package:hub/views/user/views/pages/user_page.dart';
 
 @AdaptiveAutoRouter(
   replaceInRouteName: 'Page,Route',
