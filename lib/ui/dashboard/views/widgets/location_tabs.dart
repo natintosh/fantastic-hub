@@ -9,6 +9,8 @@ import 'package:hub/__core__/views/ui/widgets/smart_widget.dart';
 import 'package:hub/ui/dashboard/views/widgets/news_preview.dart';
 import 'package:hub/ui/dashboard/views/widgets/user_preview.dart';
 import 'package:hub/ui/dashboard/views/widgets/weather_preview.dart';
+import 'package:hub/ui/details/models/data/device.dart';
+import 'package:hub/ui/details/views/pages/details_page.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
 class LocationTabs extends StatelessWidget {
@@ -39,7 +41,13 @@ class LocationTabs extends StatelessWidget {
               height: 24,
             ),
             onTap: () {
-              context.router.push(const DetailsRouter());
+              DetailsPage.lamp(
+                context: context,
+                device: Device(
+                    deviceType: 'Smart Bulb',
+                    brand: 'Phillips',
+                    location: 'Living Room'),
+              );
             },
           ),
           SmartWidget.activeSwitch(
@@ -51,6 +59,33 @@ class LocationTabs extends StatelessWidget {
               width: 24,
               height: 24,
             ),
+            onTap: () {
+              DetailsPage.airConditioner(
+                context: context,
+                device: Device(
+                    deviceType: 'Air Conditioner',
+                    brand: 'Samsung',
+                    location: 'Living Room'),
+              );
+            },
+          ),
+          SmartWidget.activeSwitch(
+            name: 'Assistant',
+            icon: IconPark.svgAsset(
+              IconPark.voice,
+              color: context.theme.iconTheme.color,
+              width: 24,
+              height: 24,
+            ),
+            onTap: () {
+              DetailsPage.voiceAssistant(
+                context: context,
+                device: Device(
+                    deviceType: 'Voice Assistant',
+                    brand: 'Amazon',
+                    location: 'Living Room'),
+              );
+            },
           ),
           SmartWidget.activeSwitch(
             name: 'Television',
@@ -60,6 +95,15 @@ class LocationTabs extends StatelessWidget {
               width: 24,
               height: 24,
             ),
+            onTap: () {
+              DetailsPage.tv(
+                context: context,
+                device: Device(
+                    deviceType: 'Smart TV',
+                    brand: 'Onn',
+                    location: 'Living Room'),
+              );
+            },
           ),
         ],
       ),

@@ -12,7 +12,7 @@ class SliderDialView extends LeafRenderObjectWidget {
   const SliderDialView({
     super.key,
     required this.context,
-    required this.thumbRadius,
+    this.thumbRadius = 16,
     this.progress = 0,
     this.minTrackValue = 0,
     this.maxTrackValue = 100,

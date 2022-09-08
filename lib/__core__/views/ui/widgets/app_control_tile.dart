@@ -1,3 +1,4 @@
+import 'package:arrow_pad/arrow_pad.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
@@ -6,6 +7,8 @@ import 'package:hub/__core__/utils/math.dart';
 import 'package:hub/__core__/views/styles/app_colors.dart';
 import 'package:hub/__core__/views/ui/widgets/app_rounded_container.dart';
 import 'package:hub/__core__/views/ui/widgets/circular_knob_view.dart';
+import 'package:hub/__core__/views/ui/widgets/color_picker_widget.dart';
+import 'package:hub/__core__/views/ui/widgets/media_control.dart';
 import 'package:hub/__core__/views/ui/widgets/slider_dial_view.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
@@ -23,11 +26,130 @@ abstract class AppControlTile extends StatelessWidget {
   Widget build(BuildContext context);
 }
 
-class DeviceMode {
-  DeviceMode({required this.label, required this.asset});
+class AppControlDirectionPad extends AppControlTile {
+  const AppControlDirectionPad({super.key}) : super(label: '');
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        Gap(20),
+        SizedBox(width: 200, height: 200, child: ArrowPad()),
+        Gap(20),
+      ],
+    );
+  }
+}
+
+class AppControlMedia extends AppControlTile {
+  const AppControlMedia({super.key}) : super(label: '');
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        Gap(20),
+        MediaControlView(),
+        Gap(20),
+      ],
+    );
+  }
+}
+
+class AppControlColorPicker extends AppControlTile {
+  const AppControlColorPicker({
+    super.key,
+    required super.label,
+    this.valueStream,
+    this.onChanged,
+  });
+
+  final Stream<Color>? valueStream;
+  final ValueChanged<Color>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Color>(
+      stream: valueStream,
+      builder: (context, snapshot) {
+        final data = snapshot.data ?? Colors.white;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (label.isNotEmpty)
+              Text(
+                label,
+                style: context.theme.textTheme.titleLarge,
+              ),
+            const Gap(20),
+            ColorPickerView(
+              color: data,
+              onChanged: onChanged,
+            ),
+            const Gap(20),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class AppControlSlider extends AppControlTile {
+  const AppControlSlider({
+    super.key,
+    required super.label,
+    this.valueStream,
+    this.onChanged,
+  });
+
+  final Stream<double>? valueStream;
+  final ValueChanged<double>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<double>(
+      stream: valueStream,
+      builder: (context, snapshot) {
+        final data = snapshot.data ?? 0.0;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (label.isNotEmpty)
+              Text(
+                label,
+                style: context.theme.textTheme.titleLarge,
+              ),
+            const Gap(20),
+            Align(
+              child: SliderDialView(
+                context: context,
+                progress: data,
+                onChanged: onChanged,
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+
+@immutable
+class DeviceMode {
+  const DeviceMode(
+      {required this.id, required this.label, required this.asset});
+
+  final int id;
   final String label;
   final String asset;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DeviceMode && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 enum TimerMode {
@@ -116,7 +238,6 @@ class AppControlTimerSelector extends AppControlTile {
               Align(
                 child: SliderDialView(
                   context: context,
-                  thumbRadius: 16,
                   progress: 0.5,
                   stepSuffix: 'H',
                   maxTrackValue: 12,
@@ -125,7 +246,8 @@ class AppControlTimerSelector extends AppControlTile {
                     data.copyWith(duration: value),
                   ),
                 ),
-              )
+              ),
+            const Gap(20),
           ],
         );
       },
@@ -144,7 +266,7 @@ class AppControlModeSelector extends AppControlTile {
 
   final Stream<int>? valueStream;
   final List<DeviceMode> modes;
-  final ValueChanged<int>? onChanged;
+  final ValueChanged<DeviceMode>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -175,11 +297,11 @@ class AppControlModeSelector extends AppControlTile {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      for (int i = 0; i < modes.length; i++)
+                      for (final mode in modes)
                         Material(
                           color: AppColors.transparent,
                           child: InkWell(
-                            onTap: () => onChanged?.call(i),
+                            onTap: () => onChanged?.call(mode),
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
@@ -190,22 +312,23 @@ class AppControlModeSelector extends AppControlTile {
                                     width: 36,
                                     height: 36,
                                     child: IconPark.svgAsset(
-                                      modes[i].asset,
-                                      color: i == selectedIndex
+                                      mode.asset,
+                                      color: mode.id == selectedIndex
                                           ? activeColor
                                           : inactiveColor,
                                     ),
                                   ),
                                   const Gap(8),
-                                  Text(
-                                    modes[i].label,
-                                    style: context.theme.textTheme.bodyMedium
-                                        ?.copyWith(
-                                      color: i == selectedIndex
-                                          ? activeColor
-                                          : inactiveColor,
+                                  if (mode.label.isNotEmpty)
+                                    Text(
+                                      mode.label,
+                                      style: context.theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        color: mode.id == selectedIndex
+                                            ? activeColor
+                                            : inactiveColor,
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -226,13 +349,15 @@ class AppControlModeSelector extends AppControlTile {
 class AppControlCircularProgress extends AppControlTile {
   const AppControlCircularProgress({
     super.key,
-    super.label = 'Celsius',
+    super.label = 'Temperature',
+    this.labelText = 'Celsius',
     this.valueStream,
     this.maxValue = 32,
     this.minValue = 16,
     this.onChanged,
   });
 
+  final String labelText;
   final double maxValue;
   final double minValue;
   final Stream<double>? valueStream;
@@ -263,7 +388,7 @@ class AppControlCircularProgress extends AppControlTile {
                 child: CircularKnobView(
                   progress: data,
                   progressText: '${value.round()}',
-                  labelText: label,
+                  labelText: labelText,
                   onChanged: onChanged,
                 ),
               ),
@@ -280,8 +405,8 @@ class AppControlSwitch extends AppControlTile {
     super.key,
     required super.label,
     this.valueStream,
-    this.activeValue = 'Connected',
-    this.inactiveValue = 'Not connected',
+    this.activeValue = 'On',
+    this.inactiveValue = 'Off',
     this.onChanged,
   });
 
