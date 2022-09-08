@@ -1,17 +1,44 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/bg/weather_cloud_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 import 'package:gap/gap.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
-import 'package:hub/__core__/extensions/theme.dart';
 import 'package:hub/__core__/views/ui/widgets/app_rounded_container.dart';
 import 'package:hub/ui/dashboard/views/widgets/weather_details.dart';
 import 'package:hub/ui/dashboard/views/widgets/weather_information_days.dart';
 import 'package:hub/ui/dashboard/views/widgets/weather_location_details.dart';
+import 'package:hub/ui/weather/data/weather.dart';
 
-class WeatherPreview extends StatelessWidget {
+class WeatherPreview extends StatefulWidget {
   const WeatherPreview({super.key});
+
+  @override
+  State<WeatherPreview> createState() => _WeatherPreviewState();
+}
+
+class _WeatherPreviewState extends State<WeatherPreview> {
+  final temperatureRange = 40;
+
+  late final List<Weather> weatherInformation = List.generate(3, (index) {
+    final temperature = -5 + Random().nextInt(temperatureRange);
+    return Weather(
+      city: 'Lagos',
+      country: 'Nigeria',
+      day: DateTime.now().add(Duration(days: index)),
+      description: temperature < 14
+          ? 'Snowy'
+          : temperature < 24
+              ? 'Rainy'
+              : 'Sunny',
+      temperature: temperature,
+    );
+  });
+
+  late Weather selectedWeather = weatherInformation.first;
+
+  void onWeatherDaySelected(Weather weather) {
+    selectedWeather = weather;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +48,20 @@ class WeatherPreview extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
-            children: const [
+            children: [
               Flexible(
-                child: WeatherInformation(),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  child: WeatherInformation(
+                    key: ValueKey(selectedWeather),
+                    weather: selectedWeather,
+                  ),
+                ),
               ),
-              WeatherInformationDays(),
+              WeatherInformationDays(
+                upcomingDays: weatherInformation,
+                onChanged: onWeatherDaySelected,
+              ),
             ],
           ),
         ),
@@ -35,15 +71,17 @@ class WeatherPreview extends StatelessWidget {
 }
 
 class WeatherInformation extends StatelessWidget {
-  const WeatherInformation({super.key});
+  const WeatherInformation({super.key, required this.weather});
+
+  final Weather weather;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        WeatherLocationDetails(),
-        Gap(20),
-        WeatherDetails(),
+      children: [
+        WeatherLocationDetails(weather: weather),
+        const Gap(20),
+        WeatherDetails(weather: weather),
       ],
     );
   }
