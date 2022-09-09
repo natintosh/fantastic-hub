@@ -39,4 +39,8 @@ class RoutineService {
   List<Routine> getAllItems() {
     return repository.getAllItems();
   }
+
+  Stream<List<Routine>> getItems() {
+    return repository.getItems();
+  }
 }

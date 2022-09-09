@@ -82,7 +82,9 @@ class _DashboardPageState extends State<DashboardPage> {
           onAction: onShowRoutinesButtonPressed,
         ),
         const Gap(20),
-        const RoutinePreview(),
+        RoutinePreview(
+          routinesStream: viewModel.getRoutines(),
+        ),
         const Gap(20),
         AppHeader.withAction(
           text: localization.locations,

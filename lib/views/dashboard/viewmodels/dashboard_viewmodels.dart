@@ -4,6 +4,7 @@ import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/devices/models/services/device_service.dart';
 import 'package:hub/views/location/models/data/location.dart';
 import 'package:hub/views/location/models/services/location_service.dart';
+import 'package:hub/views/routines/models/data/routine.dart';
 import 'package:hub/views/routines/models/services/routine_service.dart';
 
 class DashboardViewModel extends BaseViewModel {
@@ -25,5 +26,9 @@ class DashboardViewModel extends BaseViewModel {
 
   Stream<List<Location>> getLocations() {
     return locationService.getItems();
+  }
+
+  Stream<List<Routine>> getRoutines() {
+    return routineService.getItems();
   }
 }
