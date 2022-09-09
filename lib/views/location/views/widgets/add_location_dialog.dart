@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hub/__core__/components/styles/app_colors.dart';
@@ -56,7 +58,10 @@ class _AddLocationDialogState extends State<AddLocationDialog> {
   }
 
   void onLocationNameChanged(String value) {
-    newLocation = newLocation.copyWith(name: value);
+    newLocation = newLocation.copyWith(
+      id: Random().nextInt(1000),
+      name: value,
+    );
   }
 
   @override

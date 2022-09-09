@@ -3,73 +3,36 @@ import 'package:gap/gap.dart';
 import 'package:hub/__core__/components/views/widgets/app_grid_view.dart';
 import 'package:hub/__core__/components/views/widgets/smart_widget.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
-import 'package:hub/views/dashboard/views/widgets/news_preview.dart';
-import 'package:hub/views/dashboard/views/widgets/user_preview.dart';
-import 'package:hub/views/dashboard/views/widgets/weather_preview.dart';
 import 'package:hub/views/devices/models/data/device.dart';
-import 'package:hub/views/details/views/pages/details_page.dart';
+import 'package:hub/views/location/models/data/location.dart';
 
 class LocationTabs extends StatelessWidget {
   const LocationTabs({
     super.key,
     required this.tabs,
+    required this.devicesStream,
     this.index = 0,
     this.onTabSelected,
   });
 
   final int index;
 
-  final List<String> tabs;
+  final Stream<List<Device>> devicesStream;
+  final List<Location> tabs;
 
   final ValueChanged<int>? onTabSelected;
 
   @override
   Widget build(BuildContext context) {
-    final children = [
-      AppGridView(
-        children: [
-          // SmartWidget.activeSwitch(
-          //   device: const Device(
-          //       type: DeviceType.bulb,
-          //       name: 'Smart Bulb',
-          //       location: 'Living Room'),
-          //   onTap: (device) {
-          //     DetailsPage.pushOnType(context: context, device: device);
-          //   },
-          // ),
-          // SmartWidget.activeSwitch(
-          //   device: const Device(
-          //       type: DeviceType.airConditioner,
-          //       name: 'Air Conditioner',
-          //       location: 'Living Room'),
-          //   onTap: (device) {
-          //     DetailsPage.pushOnType(context: context, device: device);
-          //   },
-          // ),
-          // SmartWidget.activeSwitch(
-          //   device: const Device(
-          //       type: DeviceType.voiceAssistant,
-          //       name: 'Voice Assistant',
-          //       location: 'Living Room'),
-          //   onTap: (device) {
-          //     DetailsPage.pushOnType(context: context, device: device);
-          //   },
-          // ),
-          // SmartWidget.activeSwitch(
-          //   device: const Device(
-          //       type: DeviceType.television,
-          //       name: 'Smart TV',
-          //       location: 'Living Room'),
-          //   onTap: (device) {
-          //     DetailsPage.pushOnType(context: context, device: device);
-          //   },
-          // ),
-        ],
-      ),
-      const UserPreview(),
-      const NewsPreview(),
-      const WeatherPreview()
-    ];
+    final children = tabs
+        .map(
+          (e) => LocationPreview(
+            key: ValueKey(e),
+            location: e,
+            devicesStream: devicesStream,
+          ),
+        )
+        .toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -86,7 +49,7 @@ class LocationTabs extends StatelessWidget {
             unselectedLabelStyle: context.theme.textTheme.subtitle1,
             tabs: tabs
                 .map((e) => Tab(
-                      text: e,
+                      text: e.name,
                     ))
                 .toList(),
             onTap: onTabSelected,
@@ -98,6 +61,34 @@ class LocationTabs extends StatelessWidget {
           child: children[index],
         ),
       ],
+    );
+  }
+}
+
+class LocationPreview extends StatelessWidget {
+  const LocationPreview(
+      {super.key, required this.location, required this.devicesStream});
+
+  final Stream<List<Device>> devicesStream;
+  final Location location;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Device>>(
+      stream: devicesStream,
+      builder: (context, snapshot) {
+        final data = snapshot.data ?? [];
+
+        final children = data
+            .where((element) => element.location == location)
+            .map((e) => SmartWidget.activeSwitch(
+                  device: e,
+                ))
+            .toList();
+        return AppGridView(
+          children: children,
+        );
+      },
     );
   }
 }

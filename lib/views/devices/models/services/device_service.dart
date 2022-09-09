@@ -10,11 +10,11 @@ class DeviceService {
   final DeviceRepository repository;
 
 
-  void addLocation(Device item) {
+  void addDevice(Device item) {
     return repository.add(item);
   }
 
-  void addAllLocation(List<Device> items) {
+  void addAllDevice(List<Device> items) {
     return repository.addAll(items);
   }
 
@@ -37,5 +37,9 @@ class DeviceService {
 
   List<Device> getAllItems() {
     return repository.getAllItems();
+  }
+
+  Stream<List<Device>> getItems() {
+    return repository.getItems();
   }
 }

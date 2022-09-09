@@ -34,4 +34,8 @@ class LocationService {
   List<Location> getAllItems() {
     return repository.getAllItems();
   }
+
+  Stream<List<Location>> getItems() {
+    return repository.getItems();
+  }
 }

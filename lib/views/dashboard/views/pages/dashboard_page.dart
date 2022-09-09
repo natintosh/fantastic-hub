@@ -5,22 +5,41 @@ import 'package:gap/gap.dart';
 import 'package:hub/__core__/app_router.gr.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/views/widgets/app_header.dart';
+import 'package:hub/views/dashboard/viewmodels/dashboard_viewmodels.dart';
 import 'package:hub/views/dashboard/views/widgets/location_tabs.dart';
 import 'package:hub/views/dashboard/views/widgets/news_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/routine_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/user_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/weather_preview.dart';
+import 'package:hub/views/location/models/data/location.dart';
 import 'package:hub/views/location/views/widgets/add_location_dialog.dart';
+import 'package:provider/provider.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends StatefulWidget with AutoRouteWrapper {
   const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => DashboardViewModel(),
+      child: this,
+    );
+  }
 }
 
 class _DashboardPageState extends State<DashboardPage> {
   int index = 0;
+
+  late final DashboardViewModel viewModel;
+
+  @override
+  void initState() {
+    viewModel = context.read<DashboardViewModel>();
+    super.initState();
+  }
 
   void onLocationTabSelected(int index) {
     setState(() {
@@ -73,11 +92,17 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           onAction: onAddLocationPressed,
         ),
-        LocationTabs(
-          tabs: const ['Living Room', 'Kitchen', 'Bedroom', 'Office'],
-          onTabSelected: onLocationTabSelected,
-          index: index,
-        ),
+        StreamBuilder<List<Location>>(
+            stream: viewModel.getLocations(),
+            builder: (context, snapshot) {
+              final data = snapshot.data ?? [];
+              return LocationTabs(
+                tabs: data,
+                devicesStream: viewModel.getDevices(),
+                onTabSelected: onLocationTabSelected,
+                index: index,
+              );
+            }),
       ],
     );
     return Scaffold(
