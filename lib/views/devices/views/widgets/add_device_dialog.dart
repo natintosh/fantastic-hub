@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_text_field.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 
 class AddDeviceDialog extends StatefulWidget {
   const AddDeviceDialog({super.key, required this.draggableScrollController});
@@ -61,7 +61,7 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
           ),
         ),
         const Gap(8),
-        const AppTextField.stream(valueStream: Stream.empty()),
+        const AppTextField.text(),
         const Gap(20),
         Align(
           alignment: Alignment.centerLeft,

@@ -6,7 +6,7 @@ import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/views/dashboard/views/widgets/news_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/user_preview.dart';
 import 'package:hub/views/dashboard/views/widgets/weather_preview.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/details/views/pages/details_page.dart';
 
 class LocationTabs extends StatelessWidget {
@@ -28,46 +28,42 @@ class LocationTabs extends StatelessWidget {
     final children = [
       AppGridView(
         children: [
-          SmartWidget.activeSwitch(
-            device: const Device(
-                type: DeviceType.smartBulb,
-                name: 'Smart Bulb',
-                brand: 'Phillips',
-                location: 'Living Room'),
-            onTap: (device) {
-              DetailsPage.pushOnType(context: context, device: device);
-            },
-          ),
-          SmartWidget.activeSwitch(
-            device: const Device(
-                type: DeviceType.smartAirConditioner,
-                name: 'Air Conditioner',
-                brand: 'Samsung',
-                location: 'Living Room'),
-            onTap: (device) {
-              DetailsPage.pushOnType(context: context, device: device);
-            },
-          ),
-          SmartWidget.activeSwitch(
-            device: const Device(
-                type: DeviceType.smartVoiceAssistant,
-                name: 'Voice Assistant',
-                brand: 'Amazon',
-                location: 'Living Room'),
-            onTap: (device) {
-              DetailsPage.pushOnType(context: context, device: device);
-            },
-          ),
-          SmartWidget.activeSwitch(
-            device: const Device(
-                type: DeviceType.smartTelevision,
-                name: 'Smart TV',
-                brand: 'Onn',
-                location: 'Living Room'),
-            onTap: (device) {
-              DetailsPage.pushOnType(context: context, device: device);
-            },
-          ),
+          // SmartWidget.activeSwitch(
+          //   device: const Device(
+          //       type: DeviceType.bulb,
+          //       name: 'Smart Bulb',
+          //       location: 'Living Room'),
+          //   onTap: (device) {
+          //     DetailsPage.pushOnType(context: context, device: device);
+          //   },
+          // ),
+          // SmartWidget.activeSwitch(
+          //   device: const Device(
+          //       type: DeviceType.airConditioner,
+          //       name: 'Air Conditioner',
+          //       location: 'Living Room'),
+          //   onTap: (device) {
+          //     DetailsPage.pushOnType(context: context, device: device);
+          //   },
+          // ),
+          // SmartWidget.activeSwitch(
+          //   device: const Device(
+          //       type: DeviceType.voiceAssistant,
+          //       name: 'Voice Assistant',
+          //       location: 'Living Room'),
+          //   onTap: (device) {
+          //     DetailsPage.pushOnType(context: context, device: device);
+          //   },
+          // ),
+          // SmartWidget.activeSwitch(
+          //   device: const Device(
+          //       type: DeviceType.television,
+          //       name: 'Smart TV',
+          //       location: 'Living Room'),
+          //   onTap: (device) {
+          //     DetailsPage.pushOnType(context: context, device: device);
+          //   },
+          // ),
         ],
       ),
       const UserPreview(),

@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class MultiDayPicker extends StatefulWidget {
   const MultiDayPicker({super.key, this.onChanged});
 
-  final ValueChanged<List<int>>? onChanged;
+  final ValueChanged<List<String>>? onChanged;
 
   @override
   State<MultiDayPicker> createState() => _MultiDayPickerState();
@@ -16,10 +16,10 @@ class _MultiDayPickerState extends State<MultiDayPicker> {
   late final List<String> daysOfWeek =
       DateFormat.EEEE(Platform.localeName).dateSymbols.WEEKDAYS;
 
-  late Set<int> selectedDays = {};
+  late Set<String> selectedDays = {};
 
-  void onSelectDay(int index) {
-    final added = selectedDays.add(index);
+  void onSelectDay(String day, int index) {
+    final added = selectedDays.add(day);
     if (!added) {
       selectedDays.remove(index);
     }
@@ -35,8 +35,8 @@ class _MultiDayPickerState extends State<MultiDayPicker> {
       children: [
         for (var i = 0; i < daysOfWeek.length; i++)
           ChoiceChip(
-            selected: selectedDays.contains(i),
-            onSelected: (_) => onSelectDay(i),
+            selected: selectedDays.contains(daysOfWeek[i]),
+            onSelected: (_) => onSelectDay(daysOfWeek[i], i),
             label: Text(daysOfWeek[i]),
           ),
       ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hub/__core__/components/views/widgets/app_rounded_container.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/extensions/theme.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
 class DeviceItemTile extends StatelessWidget {
@@ -32,7 +32,7 @@ class DeviceItemTile extends StatelessWidget {
         ),
       ),
       title: Text(device.name),
-      subtitle: Text(device.location),
+      subtitle: Text(device.location.name),
       selectedTileColor: context.theme.colorScheme.surfaceVariant,
       onTap: () => onDeviceSelected?.call(device),
     );
@@ -62,7 +62,7 @@ class _SelectableDeviceItem extends DeviceItemTile {
         ),
       ),
       title: Text(device.name),
-      subtitle: Text(device.location),
+      subtitle: Text(device.location.name),
       selected: selected,
       selectedTileColor: context.theme.colorScheme.surfaceVariant,
       onTap: () => onDeviceSelected?.call(device),

@@ -15,7 +15,7 @@ import 'package:auto_route/auto_route.dart' as _i9;
 import 'package:flutter/material.dart' as _i10;
 import 'package:hub/__core__/components/views/widgets/app_control_tile.dart' as _i12;
 import 'package:hub/views/dashboard/views/pages/dashboard_page.dart' as _i5;
-import 'package:hub/views/details/models/data/device.dart' as _i11;
+import 'package:hub/views/devices/models/data/device.dart' as _i11;
 import 'package:hub/views/details/views/pages/details_page.dart' as _i3;
 import 'package:hub/views/devices/views/pages/devices_page.dart' as _i6;
 import 'package:hub/views/index/views/pages/index_page.dart' as _i2;

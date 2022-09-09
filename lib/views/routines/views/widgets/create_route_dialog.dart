@@ -1,33 +1,37 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hub/__core__/app_router.gr.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_text_field.dart';
 import 'package:hub/__core__/components/views/widgets/multi_day_picker.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/views/details/views/pages/details_page.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/devices/views/widgets/device_item_tile.dart';
 import 'package:hub/views/devices/views/widgets/device_list_dialog.dart';
-import 'package:hub/views/routines/views/widgets/routine_details.dart';
+import 'package:hub/views/routines/models/data/routine.dart';
+import 'package:hub/views/routines/viewmodels/routine_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class CreateRouteDialog extends StatefulWidget {
   const CreateRouteDialog({super.key, required this.draggableScrollController});
 
   final ScrollController draggableScrollController;
 
-  static Future<dynamic> showDialog(BuildContext context) {
-    return showModalBottomSheet<dynamic>(
+  static Future<Routine?> showDialog(BuildContext context,
+      {required RoutineViewModel viewModel}) {
+    return showModalBottomSheet<Routine>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.transparent,
       builder: (context) {
         return DraggableScrollableSheet(
           builder: (context, scrollController) {
-            return CreateRouteDialog(
-              draggableScrollController: scrollController,
+            return ChangeNotifierProvider.value(
+              value: viewModel,
+              child: CreateRouteDialog(
+                draggableScrollController: scrollController,
+              ),
             );
           },
         );
@@ -40,23 +44,72 @@ class CreateRouteDialog extends StatefulWidget {
 }
 
 class _CreateRouteDialogState extends State<CreateRouteDialog> {
+  late final RoutineViewModel viewModel;
+
   late final TextEditingController startDateController =
       TextEditingController();
+
   late final TextEditingController endDateController = TextEditingController();
+
+  late Routine newRoutine = Routine.empty();
+
+  @override
+  void initState() {
+    viewModel = context.read<RoutineViewModel>();
+    super.initState();
+  }
 
   List<Device> selectedDevices = [];
 
-  void onSaveNewRoutine() {}
+  void onSaveNewRoutine() {
+    if (newRoutine.name.isNotEmpty &&
+        newRoutine.startTime != null &&
+        newRoutine.endTime != null &&
+        newRoutine.days.isNotEmpty) {
+      Navigator.pop(context, newRoutine);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Not sure what went wrong. Enter data and try again',
+            style: context.theme.textTheme.bodyMedium
+                ?.copyWith(color: context.theme.colorScheme.onErrorContainer),
+          ),
+          backgroundColor: context.theme.colorScheme.errorContainer,
+        ),
+      );
+    }
+  }
 
   void onDevicePressed(Device device) {
-    DetailsPage.lamp(context: context, device: device);
+    DetailsPage.pushOnType(context: context, device: device);
+  }
+
+  void onScheduleNameChanged(String value) {
+    newRoutine = newRoutine.copyWith(name: value);
+  }
+
+  void onStartTimeSet(TimeOfDay time) {
+    newRoutine = newRoutine.copyWith(startTime: time);
+  }
+
+  void onEndTimeSet(TimeOfDay time) {
+    newRoutine = newRoutine.copyWith(endTime: time);
+  }
+
+  void onDaysSelected(List<String> days) {
+    newRoutine = newRoutine.copyWith(days: days);
   }
 
   Future<void> onAddDevicePressed() async {
-    final devices = DeviceListDialog.showDialog(context,
-        selectedDevices: selectedDevices);
+    final devices = DeviceListDialog.showDialog(
+      context,
+      devices: viewModel.getAllDevices(),
+      selectedDevices: selectedDevices,
+    );
 
     selectedDevices = (await devices) ?? selectedDevices;
+    newRoutine = newRoutine.copyWith(devices: selectedDevices);
     setState(() {});
   }
 
@@ -86,7 +139,7 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
           ),
         ),
         const Gap(8),
-        const AppTextField.stream(valueStream: Stream.empty()),
+        AppTextField.text(onChanged: onScheduleNameChanged),
         const Gap(20),
         Row(
           children: [
@@ -104,6 +157,7 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
                   AppTextField.time(
                     context: context,
                     controller: startDateController,
+                    onTimeSet: onStartTimeSet,
                   ),
                 ],
               ),
@@ -123,6 +177,7 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
                   AppTextField.time(
                     context: context,
                     controller: endDateController,
+                    onTimeSet: onEndTimeSet,
                   ),
                 ],
               ),
@@ -133,12 +188,14 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            'SELECT DATE',
+            'SELECT DAYS',
             style: context.theme.textTheme.bodySmall,
           ),
         ),
         const Gap(8),
-        const MultiDayPicker(),
+        MultiDayPicker(
+          onChanged: onDaysSelected,
+        ),
         const Gap(20),
         ElevatedButton.icon(
           onPressed: onAddDevicePressed,
@@ -164,7 +221,7 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
           top: Radius.circular(16),
         ),
       ),
-      child: content,
+      child: Scaffold(body: content),
     );
   }
 }

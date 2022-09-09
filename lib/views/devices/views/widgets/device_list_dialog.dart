@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/styles/app_colors.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/__core__/extensions/build_context.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/devices/views/widgets/device_item_tile.dart';
 
 class DeviceListDialog extends StatefulWidget {
   const DeviceListDialog(
       {super.key,
       required this.draggableScrollableController,
+      required this.devices,
       this.selectedDevices});
 
   final ScrollController draggableScrollableController;
 
+  final List<Device> devices;
   final List<Device>? selectedDevices;
 
-  static Future<List<Device>?> showDialog(BuildContext context,
-      {List<Device>? selectedDevices}) {
+  static Future<List<Device>?> showDialog(
+    BuildContext context, {
+    required List<Device> devices,
+    List<Device>? selectedDevices,
+  }) {
     return showModalBottomSheet<List<Device>>(
       context: context,
       backgroundColor: AppColors.transparent,
@@ -26,6 +31,7 @@ class DeviceListDialog extends StatefulWidget {
           builder: (context, scrollController) {
             return DeviceListDialog(
               draggableScrollableController: scrollController,
+              devices: devices,
               selectedDevices: selectedDevices,
             );
           },
@@ -39,15 +45,6 @@ class DeviceListDialog extends StatefulWidget {
 }
 
 class _DeviceListDialogState extends State<DeviceListDialog> {
-  List<Device> devices = List.generate(
-    8,
-    (index) => Device(
-        name: 'Lamp $index',
-        brand: 'Phillip Hue',
-        location: 'Living Room',
-        type: DeviceType.smartBulb),
-  );
-
   @override
   void initState() {
     selectedDevices.addAll(widget.selectedDevices ?? []);
@@ -87,7 +84,7 @@ class _DeviceListDialogState extends State<DeviceListDialog> {
             ),
           ],
         ),
-        for (final device in devices)
+        for (final device in widget.devices)
           DeviceItemTile.selectable(
             selected: selectedDevices.contains(device),
             device: device,

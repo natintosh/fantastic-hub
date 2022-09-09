@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
-import 'package:intl/intl.dart';
 
 class AppTextField extends StatelessWidget {
   const AppTextField({
@@ -32,10 +31,9 @@ class AppTextField extends StatelessWidget {
     this.borderRadius = 8,
   });
 
-  const factory AppTextField.stream({
+  const factory AppTextField.text({
     Key? key,
-    required Stream<String?> valueStream,
-    ValueChanged<String?> onChanged,
+    ValueChanged<String>? onChanged,
     TextEditingController? controller,
     String? hintText,
     String? initialValue,
@@ -55,7 +53,7 @@ class AppTextField extends StatelessWidget {
     Key? key,
     required BuildContext context,
     TextEditingController? controller,
-    ValueChanged<TimeOfDay >? onDateSet,
+    ValueChanged<TimeOfDay>? onTimeSet,
     ValueChanged<String>? onChanged,
     String? hintText,
     DateTime? startDate,
@@ -137,7 +135,6 @@ class AppTextField extends StatelessWidget {
 class _AppStatefulTextField extends AppTextField {
   const _AppStatefulTextField({
     super.key,
-    required this.valueStream,
     super.onChanged,
     super.controller,
     super.hintText,
@@ -154,27 +151,16 @@ class _AppStatefulTextField extends AppTextField {
     super.maxLength,
   });
 
-  final Stream<String?> valueStream;
-
   @override
   Widget textField({
     required BuildContext context,
     required InputDecoration inputDecoration,
     TextEditingController? controller,
   }) {
-    return StreamBuilder<String?>(
-      stream: valueStream,
-      builder: (context, snapshot) {
-        final errorText = snapshot.hasError ? snapshot.error.toString() : null;
-        return super.textField(
-          context: context,
-          inputDecoration: decoration(context: context, errorText: errorText),
-          controller: super.controller?.withDefaultValueFromStream(
-                snapshot,
-                initialValue,
-              ),
-        );
-      },
+    return super.textField(
+      context: context,
+      inputDecoration: decoration(context: context),
+      controller: super.controller,
     );
   }
 }
@@ -184,7 +170,7 @@ class _AppTextFieldTimePicker extends AppTextField {
     super.key,
     required this.context,
     super.controller,
-    this.onDateSet,
+    this.onTimeSet,
     super.onChanged,
     super.hintText,
     this.startDate,
@@ -196,7 +182,7 @@ class _AppTextFieldTimePicker extends AppTextField {
           keyboardType: TextInputType.none,
         );
 
-  final ValueChanged<TimeOfDay>? onDateSet;
+  final ValueChanged<TimeOfDay>? onTimeSet;
   final BuildContext context;
   final DateTime? startDate;
   final String dateFormat;
@@ -218,8 +204,7 @@ class _AppTextFieldTimePicker extends AppTextField {
     }
   }
 
-  String _getFormattedDate(TimeOfDay time, {String? formatPattern}) {
-    final format = formatPattern ?? dateFormat;
+  String _getFormattedDate(TimeOfDay time) {
     return time.format(context);
   }
 
@@ -229,27 +214,6 @@ class _AppTextFieldTimePicker extends AppTextField {
     controller?.text = formattedDate;
     onChanged?.call(formattedDate);
 
-    onDateSet?.call(time);
-  }
-}
-
-extension TextEditing on TextEditingController {
-  TextEditingController withDefaultValueFromStream(
-    AsyncSnapshot<String?> snapshot,
-    String? defaultValue,
-  ) {
-    if (!snapshot.hasData) return this;
-    if (snapshot.hasError) {
-      value = TextEditingValue(
-        text: defaultValue ?? '',
-        selection: TextSelection.collapsed(offset: defaultValue?.length ?? -1),
-      );
-      return this;
-    }
-    value = TextEditingValue(
-      text: snapshot.data ?? '',
-      selection: TextSelection.collapsed(offset: snapshot.data?.length ?? -1),
-    );
-    return this;
+    onTimeSet?.call(time);
   }
 }

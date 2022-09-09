@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hub/__core__/components/views/widgets/app_grid_view.dart';
 import 'package:hub/__core__/components/views/widgets/smart_widget.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/details/views/pages/details_page.dart';
 import 'package:hub/views/devices/views/widgets/add_device_dialog.dart';
+import 'package:hub/views/location/models/data/location.dart';
 
 class DevicesPage extends StatefulWidget {
   const DevicesPage({super.key});
@@ -20,17 +21,16 @@ class _DevicesPageState extends State<DevicesPage> {
     (index) {
       final random = Random().nextInt(100);
       final type = random < 20
-          ? DeviceType.smartBulb
+          ? DeviceType.bulb
           : random < 40
-              ? DeviceType.smartTelevision
+              ? DeviceType.television
               : random < 60
-                  ? DeviceType.smartAirConditioner
-                  : DeviceType.smartVoiceAssistant;
+                  ? DeviceType.airConditioner
+                  : DeviceType.voiceAssistant;
 
       return Device(
         name: '${type.name} $index',
-        brand: 'Samsung',
-        location: 'Living Room',
+        location: Location(id: 1, name: 'Living Room'),
         type: type,
       );
     },

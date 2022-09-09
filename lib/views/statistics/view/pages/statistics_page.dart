@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hub/__core__/components/views/widgets/app_rounded_container.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/statistics/view/widgets/bar_chart_view.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 

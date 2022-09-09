@@ -4,7 +4,7 @@ import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_rounded_container.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/extensions/theme.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
 class SmartWidget extends StatelessWidget {
@@ -61,7 +61,7 @@ class SmartWidget extends StatelessWidget {
                   ),
                   const Gap(16),
                   Text(
-                    device.location,
+                    device.location.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: context.theme.textTheme.titleMedium,

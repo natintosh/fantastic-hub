@@ -5,7 +5,7 @@ import 'package:hub/__core__/app_router.gr.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/views/widgets/app_control_tile.dart';
 import 'package:hub/__core__/components/views/widgets/color_picker_widget.dart';
-import 'package:hub/views/details/models/data/device.dart';
+import 'package:hub/views/devices/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -18,16 +18,16 @@ class DetailsPage extends StatefulWidget {
   static void pushOnType(
       {required BuildContext context, required Device device}) {
     switch (device.type) {
-      case DeviceType.smartVoiceAssistant:
+      case DeviceType.voiceAssistant:
         voiceAssistant(context: context, device: device);
         break;
-      case DeviceType.smartTelevision:
+      case DeviceType.television:
         tv(context: context, device: device);
         break;
-      case DeviceType.smartBulb:
+      case DeviceType.bulb:
         lamp(context: context, device: device);
         break;
-      case DeviceType.smartAirConditioner:
+      case DeviceType.airConditioner:
         airConditioner(context: context, device: device);
         break;
     }
@@ -198,7 +198,7 @@ class _DetailsPageState extends State<DetailsPage>
           children: [
             Text(widget.device.name),
             Text(
-              widget.device.location,
+              widget.device.location.name,
               style: context.theme.textTheme.bodySmall,
             ),
           ],

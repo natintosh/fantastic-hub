@@ -1,20 +1,21 @@
 import 'package:flutter/foundation.dart';
+import 'package:hub/views/location/models/data/location.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
 enum DeviceType {
-  smartVoiceAssistant(
+  voiceAssistant(
     icon: IconPark.voice,
     name: 'Voice Assistant',
   ),
-  smartTelevision(
+  television(
     icon: IconPark.tv,
     name: 'Television',
   ),
-  smartBulb(
+  bulb(
     icon: IconPark.light,
     name: 'Light',
   ),
-  smartAirConditioner(
+  airConditioner(
     icon: IconPark.air_conditioning,
     name: 'Air Conditioner',
   );
@@ -29,27 +30,24 @@ enum DeviceType {
 class Device {
   const Device({
     required this.name,
-    required this.brand,
     required this.location,
     required this.type,
     this.isActive = false,
   });
 
   final String name;
-  final String brand;
   final DeviceType type;
-  final String location;
+  final Location location;
   final bool isActive;
 
   Device copyWith({
     String? name,
     String? brand,
-    String? location,
+    Location? location,
     DeviceType? type,
   }) {
     return Device(
         name: name ?? this.name,
-        brand: brand ?? this.brand,
         location: location ?? this.location,
         type: type ?? this.type);
   }
@@ -60,16 +58,9 @@ class Device {
       other is Device &&
           runtimeType == other.runtimeType &&
           name == other.name &&
-          brand == other.brand &&
           type == other.type &&
-          location == other.location &&
-          isActive == other.isActive;
+          location == other.location;
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      brand.hashCode ^
-      type.hashCode ^
-      location.hashCode ^
-      isActive.hashCode;
+  int get hashCode => name.hashCode ^ type.hashCode ^ location.hashCode;
 }
