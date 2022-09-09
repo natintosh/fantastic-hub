@@ -26,7 +26,8 @@ class SmartWidget extends StatelessWidget {
   final ValueChanged<Device>? onTap;
 
   Widget get icon => Center(
-        child: IconPark.svgAsset(device.type.icon, width: 24, height: 24),
+        child:
+            IconPark.svgAsset(device.type?.icon ?? '', width: 24, height: 24),
       );
 
   @override
@@ -61,7 +62,7 @@ class SmartWidget extends StatelessWidget {
                   ),
                   const Gap(16),
                   Text(
-                    device.location.name,
+                    device.location?.name ?? '',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: context.theme.textTheme.titleMedium,

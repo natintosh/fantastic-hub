@@ -4,21 +4,34 @@ import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_text_field.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/views/devices/models/data/device.dart';
+import 'package:hub/views/location/models/data/location.dart';
 
 class AddDeviceDialog extends StatefulWidget {
-  const AddDeviceDialog({super.key, required this.draggableScrollController});
+  const AddDeviceDialog(
+      {super.key,
+      required this.draggableScrollController,
+      required this.locations});
 
+  final List<Location> locations;
   final ScrollController draggableScrollController;
 
-  static Future<void> showDialog(BuildContext context) {
-    return showModalBottomSheet(
+  static Future<Device?> showDialog(
+    BuildContext context, {
+    required List<Location> locations,
+  }) {
+    return showModalBottomSheet<Device>(
       context: context,
       backgroundColor: AppColors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        return DraggableScrollableSheet(builder: (context, controller) {
-          return AddDeviceDialog(draggableScrollController: controller);
-        });
+        return DraggableScrollableSheet(initialChildSize: 0.7,
+          builder: (context, controller) {
+            return AddDeviceDialog(
+              draggableScrollController: controller,
+              locations: locations,
+            );
+          },
+        );
       },
     );
   }
@@ -28,16 +41,32 @@ class AddDeviceDialog extends StatefulWidget {
 }
 
 class _AddDeviceDialogState extends State<AddDeviceDialog> {
+  late Device newDevice = Device.empty();
+
   List<DeviceType> deviceTypes = DeviceType.values;
 
   DeviceType? selectedType;
+  Location? selectedLocation;
 
   void onDeviceTypeSelected(DeviceType type) {
     selectedType = type;
+    newDevice = newDevice.copyWith(type: selectedType);
     setState(() {});
   }
 
-  void onAddDevice() {}
+  void onLocationSelected(Location location) {
+    selectedLocation = location;
+    newDevice = newDevice.copyWith(location: location);
+    setState(() {});
+  }
+
+  void onDeviceNameChanged(String value) {
+    newDevice = newDevice.copyWith(name: value);
+  }
+
+  void onAddDevice() {
+    Navigator.pop(context, newDevice);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +90,9 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
           ),
         ),
         const Gap(8),
-        const AppTextField.text(),
+        AppTextField.text(
+          onChanged: onDeviceNameChanged,
+        ),
         const Gap(20),
         Align(
           alignment: Alignment.centerLeft,
@@ -94,11 +125,11 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
         Wrap(
           spacing: 8.0,
           children: [
-            for (final type in deviceTypes)
+            for (final location in widget.locations)
               ChoiceChip(
-                selected: type == selectedType,
-                onSelected: (_) => onDeviceTypeSelected(type),
-                label: Text(type.name),
+                selected: location == selectedLocation,
+                onSelected: (_) => onLocationSelected(location),
+                label: Text(location.name),
               ),
           ],
         ),

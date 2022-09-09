@@ -2,9 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hub/__core__/app_router.gr.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/views/widgets/app_control_tile.dart';
-import 'package:hub/__core__/components/views/widgets/color_picker_widget.dart';
+import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/views/devices/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 import 'package:rxdart/rxdart.dart';
@@ -30,6 +29,8 @@ class DetailsPage extends StatefulWidget {
       case DeviceType.airConditioner:
         airConditioner(context: context, device: device);
         break;
+      default:
+        return;
     }
   }
 
@@ -135,10 +136,7 @@ class DetailsPage extends StatefulWidget {
               ),
             ],
           ),
-          const AppControlCircularProgress(
-            label: 'Temperature',
-            labelText: 'Celsius',
-          ),
+          const AppControlCircularProgress(),
           const AppControlTimerSelector(
             label: 'Timer',
           ),
@@ -198,7 +196,7 @@ class _DetailsPageState extends State<DetailsPage>
           children: [
             Text(widget.device.name),
             Text(
-              widget.device.location.name,
+              widget.device.location?.name ?? '',
               style: context.theme.textTheme.bodySmall,
             ),
           ],

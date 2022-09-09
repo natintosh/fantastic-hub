@@ -30,14 +30,18 @@ enum DeviceType {
 class Device {
   const Device({
     required this.name,
-    required this.location,
-    required this.type,
+    this.location,
+    this.type,
     this.isActive = false,
   });
 
+  factory Device.empty() {
+    return const Device(name: '');
+  }
+
   final String name;
-  final DeviceType type;
-  final Location location;
+  final DeviceType? type;
+  final Location? location;
   final bool isActive;
 
   Device copyWith({

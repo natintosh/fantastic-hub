@@ -59,6 +59,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final localization = context.localization;
     final content = ListView(
+      shrinkWrap: true,
       padding: EdgeInsets.only(
         top: context.mq.padding.top,
         left: 16,

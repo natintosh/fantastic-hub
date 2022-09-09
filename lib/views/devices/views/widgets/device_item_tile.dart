@@ -6,7 +6,8 @@ import 'package:hub/views/devices/models/data/device.dart';
 import 'package:iconforest_icon_park/icon_park.dart';
 
 class DeviceItemTile extends StatelessWidget {
-  const DeviceItemTile({super.key, required this.device, this.onDeviceSelected});
+  const DeviceItemTile(
+      {super.key, required this.device, this.onDeviceSelected});
 
   const factory DeviceItemTile.selectable(
       {Key? key,
@@ -27,12 +28,12 @@ class DeviceItemTile extends StatelessWidget {
         child: AppRoundedContainer(
           color: context.theme.colorScheme.surfaceElevation5,
           child: Center(
-              child:
-                  IconPark.svgAsset(device.type.icon, width: 24, height: 24)),
+              child: IconPark.svgAsset(device.type?.icon ?? '',
+                  width: 24, height: 24)),
         ),
       ),
       title: Text(device.name),
-      subtitle: Text(device.location.name),
+      subtitle: Text(device.location?.name ?? ''),
       selectedTileColor: context.theme.colorScheme.surfaceVariant,
       onTap: () => onDeviceSelected?.call(device),
     );
@@ -57,12 +58,12 @@ class _SelectableDeviceItem extends DeviceItemTile {
         child: AppRoundedContainer(
           color: context.theme.colorScheme.surfaceElevation5,
           child: Center(
-              child:
-                  IconPark.svgAsset(device.type.icon, width: 24, height: 24)),
+              child: IconPark.svgAsset(device.type?.icon ?? '',
+                  width: 24, height: 24)),
         ),
       ),
       title: Text(device.name),
-      subtitle: Text(device.location.name),
+      subtitle: Text(device.location?.name ?? ''),
       selected: selected,
       selectedTileColor: context.theme.colorScheme.surfaceVariant,
       onTap: () => onDeviceSelected?.call(device),

@@ -1,63 +1,71 @@
-import 'dart:math';
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hub/__core__/components/views/widgets/app_grid_view.dart';
 import 'package:hub/__core__/components/views/widgets/smart_widget.dart';
-import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/details/views/pages/details_page.dart';
+import 'package:hub/views/devices/models/data/device.dart';
+import 'package:hub/views/devices/viewmodels/device_viewmodels.dart';
 import 'package:hub/views/devices/views/widgets/add_device_dialog.dart';
-import 'package:hub/views/location/models/data/location.dart';
+import 'package:provider/provider.dart';
 
-class DevicesPage extends StatefulWidget {
+class DevicesPage extends StatefulWidget with AutoRouteWrapper {
   const DevicesPage({super.key});
 
   @override
   State<DevicesPage> createState() => _DevicesPageState();
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => DeviceViewModel(),
+      child: this,
+    );
+  }
 }
 
 class _DevicesPageState extends State<DevicesPage> {
-  late final List<Device> devices = List.generate(
-    7,
-    (index) {
-      final random = Random().nextInt(100);
-      final type = random < 20
-          ? DeviceType.bulb
-          : random < 40
-              ? DeviceType.television
-              : random < 60
-                  ? DeviceType.airConditioner
-                  : DeviceType.voiceAssistant;
+  late final DeviceViewModel viewModel;
 
-      return Device(
-        name: '${type.name} $index',
-        location: Location(id: 1, name: 'Living Room'),
-        type: type,
-      );
-    },
-  );
+  @override
+  void initState() {
+    viewModel = context.read<DeviceViewModel>();
+    super.initState();
+  }
 
   void onDeviceTap(Device device) {
     DetailsPage.pushOnType(context: context, device: device);
   }
 
-  void onAddNewDeviceButtonPressed() {
-    AddDeviceDialog.showDialog(context);
+  Future<void> onAddNewDeviceButtonPressed() async {
+    final device = await AddDeviceDialog.showDialog(
+      context,
+      locations: viewModel.getLocation(),
+    );
+
+    if (device != null) {
+      viewModel.addDevice(device);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: AppGridView(
-        children: [
-          for (final device in devices)
-            SmartWidget(
-              device: device,
-              onTap: onDeviceTap,
+    final content = StreamBuilder<List<Device>>(
+        stream: viewModel.getDevices(),
+        builder: (context, snapshot) {
+          final data = snapshot.data ?? [];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: AppGridView(
+              children: [
+                for (final device in data)
+                  SmartWidget(
+                    device: device,
+                    onTap: onDeviceTap,
+                  ),
+              ],
             ),
-        ],
-      ),
-    );
+          );
+        });
 
     return Scaffold(
       appBar: AppBar(
