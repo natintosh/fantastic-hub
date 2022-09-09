@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hub/__core__/extensions/build_context.dart';
 import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_text_field.dart';
+import 'package:hub/__core__/extensions/build_context.dart';
+import 'package:hub/views/location/location_viewmodel.dart';
+import 'package:hub/views/location/models/data/location.dart';
+import 'package:provider/provider.dart';
 
 class AddLocationDialog extends StatefulWidget {
   const AddLocationDialog({super.key});
@@ -12,7 +15,9 @@ class AddLocationDialog extends StatefulWidget {
       context: context,
       backgroundColor: AppColors.transparent,
       builder: (context) {
-        return const AddLocationDialog();
+        return ChangeNotifierProvider(
+            create: (context) => LocationViewModel(),
+            child: const AddLocationDialog());
       },
     );
   }
@@ -22,7 +27,37 @@ class AddLocationDialog extends StatefulWidget {
 }
 
 class _AddLocationDialogState extends State<AddLocationDialog> {
-  void onAddLocationButtonPressed() {}
+  late final LocationViewModel viewModel;
+
+  late Location newLocation = Location.empty();
+
+  @override
+  void initState() {
+    viewModel = context.read<LocationViewModel>();
+    super.initState();
+  }
+
+  void onAddLocationButtonPressed() {
+    if (newLocation.name.isNotEmpty) {
+      viewModel.addLocation(newLocation);
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Location name is empty.',
+            style: context.theme.textTheme.bodyMedium
+                ?.copyWith(color: context.theme.colorScheme.onErrorContainer),
+          ),
+          backgroundColor: context.theme.colorScheme.errorContainer,
+        ),
+      );
+    }
+  }
+
+  void onLocationNameChanged(String value) {
+    newLocation = newLocation.copyWith(name: value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +80,9 @@ class _AddLocationDialogState extends State<AddLocationDialog> {
           ),
         ),
         const Gap(8),
-        const AppTextField.text(),
+        AppTextField.text(
+          onChanged: onLocationNameChanged,
+        ),
         const Gap(20),
         SizedBox(height: context.mq.viewInsets.bottom),
         ElevatedButton(

@@ -12,7 +12,7 @@ class RoutineDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String days = shortenDayList(routine.days);
+    final String days = shortenDayList(routine.days ?? []);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -51,14 +51,14 @@ class RoutineDetails extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (routine.devices.isEmpty)
+              if (routine.devices?.isEmpty ?? true)
                 Text(
                   'No Devices',
                   style: context.theme.textTheme.titleMedium,
                 )
               else
                 Text(
-                  'x${routine.devices.length} Devices',
+                  'x${routine.devices?.length ?? 0} Devices',
                   style: context.theme.textTheme.titleMedium,
                 ),
               const Gap(16),

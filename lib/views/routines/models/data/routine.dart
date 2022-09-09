@@ -7,22 +7,22 @@ class Routine {
       {required this.name,
       required this.startTime,
       required this.endTime,
-      this.days = const [],
-      this.devices = const []});
+      this.days,
+      this.devices});
 
   factory Routine.empty() {
     return const Routine(
       name: '',
-      startTime: TimeOfDay(hour: 0, minute: 0),
-      endTime: TimeOfDay(hour: 0, minute: 0),
+      startTime: null,
+      endTime: null,
     );
   }
 
   final String name;
   final TimeOfDay? startTime;
   final TimeOfDay? endTime;
-  final List<String> days;
-  final List<Device> devices;
+  final List<String>? days;
+  final List<Device>? devices;
 
   Routine copyWith({
     String? name,

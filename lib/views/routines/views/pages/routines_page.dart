@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hub/__core__/components/styles/app_colors.dart';
 import 'package:hub/__core__/components/views/widgets/app_rounded_container.dart';
 import 'package:hub/views/routines/models/data/routine.dart';
 import 'package:hub/views/routines/viewmodels/routine_viewmodel.dart';
@@ -43,6 +44,17 @@ class _RoutinesPageState extends State<RoutinesPage> {
     }
   }
 
+  Future<void> onRouteTap(Routine data) async {
+    final routine = await CreateRouteDialog.showDialog(
+      context,
+      viewModel: viewModel,
+      routine: data,
+    );
+    if (routine != null) {
+      viewModel.updateRoutine(data, routine);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final content = StreamBuilder<List<Routine>>(
@@ -58,8 +70,14 @@ class _RoutinesPageState extends State<RoutinesPage> {
             },
             itemBuilder: (context, index) {
               return AppRoundedContainer(
-                child: RoutineDetails(
-                  routine: data[index],
+                child: Material(
+                  color: AppColors.transparent,
+                  child: InkWell(
+                    onTap: () => onRouteTap(data[index]),
+                    child: RoutineDetails(
+                      routine: data[index],
+                    ),
+                  ),
                 ),
               );
             },

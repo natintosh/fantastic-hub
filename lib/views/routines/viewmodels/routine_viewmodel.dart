@@ -33,6 +33,11 @@ class RoutineViewModel extends BaseViewModel {
     update();
   }
 
+  void updateRoutine(Routine oldRoutine, Routine routine) {
+    service.updateWhere((element) => element == oldRoutine, routine);
+    update();
+  }
+
   List<Device> getAllDevices() {
     return deviceService.getAllItems();
   }

@@ -56,7 +56,6 @@ class AppTextField extends StatelessWidget {
     ValueChanged<TimeOfDay>? onTimeSet,
     ValueChanged<String>? onChanged,
     String? hintText,
-    DateTime? startDate,
     String dateFormat,
   }) = _AppTextFieldTimePicker;
 
@@ -173,7 +172,6 @@ class _AppTextFieldTimePicker extends AppTextField {
     this.onTimeSet,
     super.onChanged,
     super.hintText,
-    this.startDate,
     this.dateFormat = 'yyyy/MM/dd',
   }) : super(
           showCursor: false,
@@ -184,7 +182,6 @@ class _AppTextFieldTimePicker extends AppTextField {
 
   final ValueChanged<TimeOfDay>? onTimeSet;
   final BuildContext context;
-  final DateTime? startDate;
   final String dateFormat;
 
   @override

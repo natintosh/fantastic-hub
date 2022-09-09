@@ -2,10 +2,21 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class Location {
-  Location({required this.id, required this.name});
+  const Location({required this.id, required this.name});
+
+  factory Location.empty() {
+    return const Location(id: 0, name: '');
+  }
 
   final int id;
   final String name;
+
+  Location copyWith({int? id, String? name}) {
+    return Location(
+      id: id ?? this.id,
+      name: name ?? this.name,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>

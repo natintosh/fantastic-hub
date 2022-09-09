@@ -14,12 +14,14 @@ import 'package:hub/views/routines/viewmodels/routine_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class CreateRouteDialog extends StatefulWidget {
-  const CreateRouteDialog({super.key, required this.draggableScrollController});
+  const CreateRouteDialog(
+      {super.key, required this.draggableScrollController, this.routine});
 
+  final Routine? routine;
   final ScrollController draggableScrollController;
 
   static Future<Routine?> showDialog(BuildContext context,
-      {required RoutineViewModel viewModel}) {
+      {required RoutineViewModel viewModel, Routine? routine}) {
     return showModalBottomSheet<Routine>(
       context: context,
       isScrollControlled: true,
@@ -30,6 +32,7 @@ class CreateRouteDialog extends StatefulWidget {
             return ChangeNotifierProvider.value(
               value: viewModel,
               child: CreateRouteDialog(
+                routine: routine,
                 draggableScrollController: scrollController,
               ),
             );
@@ -46,6 +49,9 @@ class CreateRouteDialog extends StatefulWidget {
 class _CreateRouteDialogState extends State<CreateRouteDialog> {
   late final RoutineViewModel viewModel;
 
+  late final TextEditingController scheduleNameController =
+      TextEditingController();
+
   late final TextEditingController startDateController =
       TextEditingController();
 
@@ -53,25 +59,51 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
 
   late Routine newRoutine = Routine.empty();
 
+  List<Device> selectedDevices = [];
+
   @override
   void initState() {
     viewModel = context.read<RoutineViewModel>();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (widget.routine != null) {
+        setup();
+      }
+    });
   }
 
-  List<Device> selectedDevices = [];
+  void setup() {
+    scheduleNameController.text = widget.routine?.name ?? '';
+    startDateController.text = widget.routine?.startTime?.format(context) ?? '';
+    endDateController.text = widget.routine?.endTime?.format(context) ?? '';
+    selectedDevices = widget.routine?.devices ?? [];
+    setState(() {});
+  }
 
   void onSaveNewRoutine() {
+    if (widget.routine != null) {
+      Navigator.pop(
+        context,
+        widget.routine?.copyWith(
+          name: newRoutine.name,
+          startTime: newRoutine.startTime,
+          endTime: newRoutine.endTime,
+          days: newRoutine.days,
+          devices: newRoutine.devices,
+        ),
+      );
+      return;
+    }
     if (newRoutine.name.isNotEmpty &&
         newRoutine.startTime != null &&
         newRoutine.endTime != null &&
-        newRoutine.days.isNotEmpty) {
+        (newRoutine.days ?? []).isNotEmpty) {
       Navigator.pop(context, newRoutine);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Not sure what went wrong. Enter data and try again',
+            'Some values are empty. Enter them and try again',
             style: context.theme.textTheme.bodyMedium
                 ?.copyWith(color: context.theme.colorScheme.onErrorContainer),
           ),
@@ -122,7 +154,9 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
         const Gap(20),
         AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Create Routine'),
+          title: widget.routine == null
+              ? const Text('Create Routine')
+              : const Text('Update Routine'),
           actions: [
             TextButton(
               onPressed: onSaveNewRoutine,
@@ -139,7 +173,9 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
           ),
         ),
         const Gap(8),
-        AppTextField.text(onChanged: onScheduleNameChanged),
+        AppTextField.text(
+            controller: scheduleNameController,
+            onChanged: onScheduleNameChanged),
         const Gap(20),
         Row(
           children: [
@@ -194,6 +230,7 @@ class _CreateRouteDialogState extends State<CreateRouteDialog> {
         ),
         const Gap(8),
         MultiDayPicker(
+          selectedDays: widget.routine?.days ?? [],
           onChanged: onDaysSelected,
         ),
         const Gap(20),
