@@ -31,4 +31,8 @@ class DashboardViewModel extends BaseViewModel {
   Stream<List<Routine>> getRoutines() {
     return routineService.getItems();
   }
+
+  void updateDevice(Device old, Device device) {
+    deviceService.updateWhere((element) => old == element, device);
+  }
 }

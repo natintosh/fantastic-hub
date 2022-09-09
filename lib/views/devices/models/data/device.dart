@@ -49,11 +49,14 @@ class Device {
     String? brand,
     Location? location,
     DeviceType? type,
+    bool? isActive,
   }) {
     return Device(
-        name: name ?? this.name,
-        location: location ?? this.location,
-        type: type ?? this.type);
+      name: name ?? this.name,
+      location: location ?? this.location,
+      type: type ?? this.type,
+      isActive: isActive ?? this.isActive,
+    );
   }
 
   @override

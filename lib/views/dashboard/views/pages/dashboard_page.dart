@@ -104,6 +104,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 devicesStream: viewModel.getDevices(),
                 onTabSelected: onLocationTabSelected,
                 index: index,
+                onDeviceActivated: viewModel.updateDevice,
               );
             }),
       ],

@@ -20,9 +20,12 @@ class DeviceViewModel extends BaseViewModel {
     return locationService.getAllItems();
   }
 
-
   Stream<List<Device>> getDevices() {
     return service.getItems();
+  }
+
+  List<Device> getAllDevices() {
+    return service.getAllItems();
   }
 
   void addDevice(Device device) {

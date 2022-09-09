@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hub/__core__/components/views/widgets/app_grid_view.dart';
 import 'package:hub/__core__/components/views/widgets/smart_widget.dart';
 import 'package:hub/__core__/extensions/build_context.dart';
+import 'package:hub/views/details/views/pages/details_page.dart';
 import 'package:hub/views/devices/models/data/device.dart';
 import 'package:hub/views/location/models/data/location.dart';
 
@@ -13,6 +14,7 @@ class LocationTabs extends StatelessWidget {
     required this.devicesStream,
     this.index = 0,
     this.onTabSelected,
+    this.onDeviceActivated,
   });
 
   final int index;
@@ -20,6 +22,7 @@ class LocationTabs extends StatelessWidget {
   final Stream<List<Device>> devicesStream;
   final List<Location> tabs;
 
+  final void Function(Device old, Device device)? onDeviceActivated;
   final ValueChanged<int>? onTabSelected;
 
   @override
@@ -30,6 +33,7 @@ class LocationTabs extends StatelessWidget {
             key: ValueKey(e),
             location: e,
             devicesStream: devicesStream,
+            onDeviceActivated: onDeviceActivated,
           ),
         )
         .toList();
@@ -66,11 +70,16 @@ class LocationTabs extends StatelessWidget {
 }
 
 class LocationPreview extends StatelessWidget {
-  const LocationPreview(
-      {super.key, required this.location, required this.devicesStream});
+  const LocationPreview({
+    super.key,
+    required this.location,
+    required this.devicesStream,
+    this.onDeviceActivated,
+  });
 
   final Stream<List<Device>> devicesStream;
   final Location location;
+  final void Function(Device old, Device device)? onDeviceActivated;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +92,12 @@ class LocationPreview extends StatelessWidget {
             .where((element) => element.location == location)
             .map((e) => SmartWidget.activeSwitch(
                   device: e,
+                  onTap: (device) {
+                    DetailsPage.pushOnType(context: context, device: device);
+                  },
+                  onSwitchChanged: (value) {
+                    onDeviceActivated?.call(e, e.copyWith(isActive: value));
+                  },
                 ))
             .toList();
         return AppGridView(

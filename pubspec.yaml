@@ -44,6 +44,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   surf_lint_rules: ^1.0.0
 
+  test: ^1.19.5
+  mockito: ^5.1.0
+
 flutter:
   uses-material-design: true
   generate: true
